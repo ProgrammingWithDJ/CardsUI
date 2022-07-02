@@ -18,8 +18,25 @@ export class CardsService {
 
   addCard(card: Card): Observable<Card>
   {
-    card.Id='00000000-0000-0000-0000-000000000000';
+    card.id='00000000-0000-0000-0000-000000000000';
     return this.http.post<Card>(this.baseUrl,card);
 
+  }
+
+  updateCard(card: Card): Observable<Card>
+  {
+
+    return this.http.put<Card>(this.baseUrl + '/' + card.id,card);
+
+  }
+
+  deleteCard(id: string):Observable<Card>
+  {
+  return this.http.delete<Card>(this.baseUrl + '/' + id)
+  }
+
+  getCard(id: string):Observable<Card>
+  {
+    return this.http.get<Card>(this.baseUrl + '/' + id);
   }
 }

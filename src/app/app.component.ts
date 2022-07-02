@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CardsService } from './services/cards.service';
-import { Card } from './models/card.model';
+import { MsalService } from '@azure/msal-angular';
+import { AuthenticationResult } from '@azure/msal-browser';
 
 @Component({
   selector: 'app-root',
@@ -8,61 +8,40 @@ import { Card } from './models/card.model';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
-  //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-  //Add 'implements OnInit' to the class.
+  constructor(private msalService: MsalService) {
 
-ngOnInit(): void {
-  //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-  //Add 'implements OnInit' to the class.
-  this.getAllCards();
+
+  }
+
+isLoggedIn(): boolean {
+
+ if(this.msalService.instance.getActiveAccount() != null)
+ {
+   return true;
+ }
+ else
+ {
+   return false;
+ }
 }
-  title = 'cards';
-  cards: Card[] =[];
-  card: Card = {
-Id:'',
-cardholderName:'',
-cardNumber: '',
-CVC: '',
-expiryMonth: '',
-expiryYear: ''
-  }
 
+  login(){
+  this.msalService.loginPopup().subscribe(
 
-  /**
-   *
-   */
-  constructor(private cardService: CardsService) {
+   (response: AuthenticationResult) => {
+     this.msalService.instance.setActiveAccount(response.account)
+   }
 
-  }
-
-  getAllCards()
-  {
-this.cardService.getAllCards()
-.subscribe(
-response =>{
-  this.cards =response;
-
-console.log(response);
-}
-);
-  }
-
-  onSubmit(){
-   this.cardService.addCard(this.card)
-   .subscribe(
-     response => {
-
-      this.getAllCards();
-      this.card ={
-        Id:'',
-cardholderName:'',
-cardNumber: '',
-CVC: '',
-expiryMonth: '',
-expiryYear: ''
-
-      }
-     }
    );
   }
+
+
+
+  loginOut(){
+   this.msalService.logout();
+  }
+
+ ngOnInit(): void {
+ }
+
 }
